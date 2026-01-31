@@ -1,3 +1,7 @@
+/*
+    sqlite3 facturacion.db < schema.sql
+*/
+
 -- Tabla de Clientes
 CREATE TABLE Clientes (
     Id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -19,6 +23,12 @@ CREATE TABLE Productos (
     Id INTEGER PRIMARY KEY AUTOINCREMENT,
     Nombre TEXT NOT NULL,
     PrecioUnitario REAL NOT NULL
+);
+
+-- Tabla de Formas de Pago
+CREATE TABLE FormasPago (
+    Id INTEGER PRIMARY KEY AUTOINCREMENT,    
+    TipoPago TEXT NOT NULL -- Ejemplo: 'Efectivo', 'Tarjeta', 'Transferencia'        
 );
 
 -- Tabla de Facturas
@@ -44,11 +54,12 @@ CREATE TABLE DetallesFactura (
     FOREIGN KEY (FacturaId) REFERENCES Facturas(Id),
     FOREIGN KEY (ProductoId) REFERENCES Productos(Id)
 );
-
--- Tabla de Formas de Pago
-CREATE TABLE FormasPago (
+-- Tabla de Formas de Pago por factura
+CREATE TABLE FormasPagoFactura (
     Id INTEGER PRIMARY KEY AUTOINCREMENT,
     FacturaId INTEGER NOT NULL,
-    TipoPago TEXT NOT NULL, -- Ejemplo: 'Efectivo', 'Tarjeta', 'Transferencia'    
-    FOREIGN KEY (FacturaId) REFERENCES Facturas(Id)
+    FormaPagoId INTEGER NOT NULL,
+    ValorPagado REAL NOT NULL,
+    FOREIGN KEY (FacturaId) REFERENCES Facturas(Id),
+    FOREIGN KEY (FormaPagoId) REFERENCES FormasPago(Id)
 );

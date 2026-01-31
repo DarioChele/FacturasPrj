@@ -1,0 +1,2 @@
+[1/31/2026 2:56:18 AM] ERROR: Fallo al crear factura: ES3120260244 | Ex: SQLite Error 19: 'FOREIGN KEY constraint failed'.
+[1/31/2026 2:58:33 AM] ERROR: Fallo al crear factura: ES3120260244 | Ex: SQLite Error 19: 'FOREIGN KEY constraint failed'.
