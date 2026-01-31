@@ -1,0 +1,15 @@
+# Backend .NET
+Backend/bin/
+Backend/obj/
+*.log
+
+# Frontend Angular
+Frontend/node_modules/
+Frontend/dist/
+
+# Base de datos local
+Backend/Database/*.db
+
+# Archivos temporales
+*.tmp
+*.swp
