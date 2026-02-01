@@ -1,50 +1,87 @@
 using Microsoft.Data.Sqlite;
 using Backend.Models;
 using Backend.Persistence.Context;
+using Backend.Persistence.Repositories.Interfaces;
 
-namespace Backend.Persistence.Repositories{
-    public class ProductoRepository:IProductoRepository{
-        private readonly ConexionSql _contexto;
+namespace Backend.Persistence.Repositories;
+public class ProductoRepository:IProductoRepository{
+    private readonly ConexionSql _contexto;
 
-        public ProductoRepository(ConexionSql contexto){
-        _contexto = contexto;
+    public ProductoRepository(ConexionSql contexto){
+    _contexto = contexto;
     }
 
-        public List<Producto> ObtenerTodos(){
-            var productos = new List<Producto>();
-            try{
-                _contexto.Open();
-                var command = _contexto.ObtenerConexion().CreateCommand();
-                command.CommandText = "SELECT Id, Nombre, PrecioUnitario FROM Productos";
-                
-                using var reader = command.ExecuteReader();
-                while (reader.Read()){
-                    productos.Add(new Producto {
-                        Id = reader.GetInt32(0),
-                        Nombre = reader.GetString(1),
-                        PrecioUnitario = reader.GetDecimal(2)
-                    });
-                }
+    public async Task<List<ProductoDTO>> ObtenerTodos(){
+        var productos = new List<Producto>();
+        try{
+            await _contexto.OpenAsync();
+            var command = _contexto.ObtenerConexion().CreateCommand();
+            command.CommandText = "SELECT Id, Nombre, PrecioUnitario, Estado FROM Productos";
+            
+            using var reader = await command.ExecuteReaderAsync();
+            while (await reader.ReadAsync()){
+                productos.Add(new Producto {
+                    Id = reader.GetInt32(reader.GetOrdinal("Id")),
+                    Nombre = reader.GetString(reader.GetOrdinal("Nombre")),
+                    PrecioUnitario = reader.GetDecimal(reader.GetOrdinal("PrecioUnitario")),
+                    Estado = reader.GetInt32(reader.GetOrdinal("Estado"))
+                });
             }
-            finally { _contexto.Close(); }
-            return productos;
-        }
+        } finally { _contexto.Close(); }
 
-        public int Crear(Producto producto){
-            try{
-                _contexto.Open();
-                var command = _contexto.ObtenerConexion().CreateCommand();
-                command.CommandText = @"
-                    INSERT INTO Productos (Nombre, PrecioUnitario) 
-                    VALUES (@nom, @precio);
-                    SELECT last_insert_rowid();";
-                
-                command.Parameters.AddWithValue("@nom", producto.Nombre);
-                command.Parameters.AddWithValue("@precio", producto.PrecioUnitario);
+        return productos.Select(p => new ProductoDTO {
+            Id = p.Id,
+            Nombre = p.Nombre,
+            PrecioUnitario = p.PrecioUnitario,
+            Estado = p.Estado
+        }).ToList();
+    }
 
-                return Convert.ToInt32(command.ExecuteScalar());
-            }
-            finally { _contexto.Close(); }
+    public async Task<int> Crear(Producto producto){
+        try{
+            await _contexto.OpenAsync();
+            var command = _contexto.ObtenerConexion().CreateCommand();
+            command.CommandText = @"
+                INSERT INTO Productos (Nombre, PrecioUnitario) 
+                VALUES (@nom, @precio);
+                SELECT last_insert_rowid();";
+            
+            command.Parameters.AddWithValue("@nom", producto.Nombre);
+            command.Parameters.AddWithValue("@precio", producto.PrecioUnitario);
+
+            return Convert.ToInt32(await command.ExecuteScalarAsync());
+        }finally { _contexto.Close(); }
+    }
+    public async Task<bool> Modificar(Producto producto){
+        try{
+            await _contexto.OpenAsync();
+            using var command = _contexto.ObtenerConexion().CreateCommand();
+            command.CommandText = @"
+                UPDATE Productos 
+                SET Nombre = @nom, PrecioUnitario = @precio
+                WHERE Id = @id";
+            command.Parameters.AddWithValue("@id", producto.Id);
+            command.Parameters.AddWithValue("@nom", producto.Nombre);
+            command.Parameters.AddWithValue("@precio", producto.PrecioUnitario);
+
+            int filasAfectadas = await command.ExecuteNonQueryAsync();
+            return filasAfectadas > 0;
         }
+        finally { _contexto.Close(); }
+    }
+    public async Task<bool> Eliminar(Producto producto){
+        try{
+            await _contexto.OpenAsync();
+            using var command = _contexto.ObtenerConexion().CreateCommand();
+            command.CommandText = @"
+                UPDATE Productos 
+                SET estado = 0
+                WHERE Id = @id ";
+            command.Parameters.AddWithValue("@id", producto.Id);
+
+            int filasAfectadas = await command.ExecuteNonQueryAsync();
+            return filasAfectadas > 0;
+        }
+        finally { _contexto.Close(); }
     }
 }

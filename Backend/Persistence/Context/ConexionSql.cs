@@ -2,6 +2,7 @@ using Microsoft.Data.Sqlite;
 using System.Data;
 
 namespace Backend.Persistence.Context;
+
 public class ConexionSql : IDisposable {
     private readonly SqliteConnection _conexion;
     private SqliteTransaction? _transaccion; 
@@ -11,6 +12,11 @@ public class ConexionSql : IDisposable {
         _configuration = configuration;
         var connectionString = _configuration.GetConnectionString("DefaultConnection");
         _conexion = new SqliteConnection(connectionString);
+    }
+    
+    public async Task OpenAsync() {
+        if (_conexion.State != ConnectionState.Open)
+            await _conexion.OpenAsync();
     }
 
     public void Open() {
@@ -23,16 +29,20 @@ public class ConexionSql : IDisposable {
             _conexion.Close();
     }
 
-    // Para las facturas: Iniciar una transacción
-    public void InitTran() {
-        Open();
+    // --- Transacciones Asíncronas ---
+    public async Task InitTranAsync() {
+        await OpenAsync();
         _transaccion = _conexion.BeginTransaction();
     }
 
-    public void CommitTran() => _transaccion?.Commit();
-    public void RollBack() => _transaccion?.Rollback();
+    public async Task CommitTranAsync() {
+        if (_transaccion != null) await _transaccion.CommitAsync();
+    }
 
-    // Acceso a la conexión para los comandos del repositorio
+    public async Task RollBackAsync() {
+        if (_transaccion != null) await _transaccion.RollbackAsync();
+    }
+
     public SqliteConnection ObtenerConexion() => _conexion;
 
     public void Dispose() {

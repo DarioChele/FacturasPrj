@@ -1,6 +1,12 @@
 using Backend.Persistence.Context;
 using Backend.Persistence.Repositories;
+using Backend.Persistence.Repositories.Interfaces;
 using Backend.Persistence.Logging;
+using Backend.Services;
+using System.Text;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.IdentityModel.Tokens;
+using Microsoft.OpenApi.Models;
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
@@ -8,7 +14,31 @@ var builder = WebApplication.CreateBuilder(args);
 // 1. Servicios básicos
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen();
+
+builder.Services.AddSwaggerGen(c => {
+    c.SwaggerDoc("v1", new OpenApiInfo { Title = "Factura API", Version = "v1" });
+
+    // 1. Definir el esquema de seguridad
+    c.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme {
+        Description = "JWT Authorization encabezado usando el esquema Bearer. Ejemplo: 'Bearer 12345abcdef'",
+        Name = "Authorization",
+        In = ParameterLocation.Header,
+        Type = SecuritySchemeType.ApiKey,
+        Scheme = "Bearer"
+    });
+
+    // 2. Aplicar la seguridad de forma global en Swagger
+    c.AddSecurityRequirement(new OpenApiSecurityRequirement {{
+            new OpenApiSecurityScheme {
+                Reference = new OpenApiReference {
+                    Type = ReferenceType.SecurityScheme,
+                    Id = "Bearer"
+                }
+            },
+            new string[] {}
+        }
+    });
+});
 
 // Configuración de CORS 
 builder.Services.AddCors(options => { 
@@ -24,7 +54,7 @@ builder.Services.AddScoped<ConexionSql>();
     AddScoped: Significa que por cada solicitud HTTP que llegue a la aplicación, se creará una nueva instancia de la clase ConexionSql.
 */
 
-//Logg
+//Logger
 builder.Services.AddSingleton<IFileLogger, FileLogger>();
 
 // Repositorios
@@ -38,6 +68,32 @@ builder.Services.AddScoped<IFacturaRepository, FacturaRepository>();
     ¿Xq? Esto es útil cuando el repositorio maneja datos específicos de una solicitud, como transacciones o contexto de usuario.
 */
 
+//Autehnticacion
+// JWT
+var jwtSettings = builder.Configuration.GetSection("Jwt");
+var key = Encoding.UTF8.GetBytes(jwtSettings["Key"]!);
+
+builder.Services.AddAuthentication(options => {
+    options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+    options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+})
+.AddJwtBearer(options => {
+    options.TokenValidationParameters = new TokenValidationParameters {
+        ValidateIssuer = true,
+        ValidateAudience = true,
+        ValidateLifetime = true,
+        ValidateIssuerSigningKey = true,
+        ValidIssuer = jwtSettings["Issuer"],
+        ValidAudience = jwtSettings["Audience"],
+        IssuerSigningKey = new SymmetricSecurityKey(key)
+    };
+});
+
+// Servicios
+builder.Services.AddScoped<IAuthService, AuthService>();
+builder.Services.AddScoped<IUsuarioService, UsuarioService>();
+
+
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
@@ -50,26 +106,6 @@ app.UseCors("AllowAll");
 app.UseAuthentication();
 app.UseAuthorization();
 app.UseHttpsRedirection();
-var summaries = new[]{
-    "Freezing", "Bracing", "Chilly", "Cool", "Mild", "Warm", "Balmy", "Hot", "Sweltering", "Scorching"
-};
-
-app.MapGet("/weatherforecast", () =>{
-    var forecast =  Enumerable.Range(1, 5).Select(index =>
-        new WeatherForecast(
-            DateOnly.FromDateTime(DateTime.Now.AddDays(index)),
-            Random.Shared.Next(-20, 55),
-            summaries[Random.Shared.Next(summaries.Length)]
-        ))
-        .ToArray();
-    return forecast;
-})
-.WithName("GetWeatherForecast")
-.WithOpenApi();
 
 app.MapControllers();
 app.Run();
-
-record WeatherForecast(DateOnly Date, int TemperatureC, string? Summary){
-    public int TemperatureF => 32 + (int)(TemperatureC / 0.5556);
-}

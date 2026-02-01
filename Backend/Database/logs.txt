@@ -1,2 +1,9 @@
 [1/31/2026 2:56:18 AM] ERROR: Fallo al crear factura: ES3120260244 | Ex: SQLite Error 19: 'FOREIGN KEY constraint failed'.
 [1/31/2026 2:58:33 AM] ERROR: Fallo al crear factura: ES3120260244 | Ex: SQLite Error 19: 'FOREIGN KEY constraint failed'.
+[1/31/2026 4:10:42 AM] ERROR: Error al buscar facturas | Ex: Exception of type 'System.ArgumentOutOfRangeException' was thrown. (Parameter 'ordinal')
+Actual value was 14.
+[1/31/2026 4:12:04 AM] ERROR: Error al buscar facturas | Ex: No data exists for the row/column.
+[1/31/2026 4:50:49 AM] ERROR: Error al buscar facturas | Ex: An open reader is associated with this command. Close it before changing the CommandText property.
+[1/31/2026 4:53:01 AM] ERROR: Error al buscar facturas | Ex: An open reader is associated with this command. Close it before changing the CommandText property.
+[1/31/2026 5:01:59 AM] ERROR: Fallo al crear factura: string | Ex: SQLite Error 19: 'FOREIGN KEY constraint failed'.
+[1/31/2026 5:04:01 AM] ERROR: Fallo al crear factura: string | Ex: SQLite Error 19: 'UNIQUE constraint failed: Facturas.NumeroFactura'.

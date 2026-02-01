@@ -8,27 +8,31 @@ CREATE TABLE Clientes (
     Identificacion TEXT NOT NULL,
     Nombre TEXT NOT NULL,
     Telefono TEXT,
-    Correo TEXT
+    Correo TEXT,
+    Estado INTEGER NOT NULL DEFAULT 1 -- 1: Activo, 0: Inactivo
 );
 
 -- Tabla de Usuarios/Vendedores
 CREATE TABLE Usuarios (
     Id INTEGER PRIMARY KEY AUTOINCREMENT,
     Nombre TEXT NOT NULL,
-    Rol TEXT NOT NULL -- Ejemplo: 'Vendedor', 'Admin'
+    PasswordHash TEXT NOT NULL,
+    Rol INTEGER NOT NULL DEFAULT 1, -- 0 'Admin', 1 'Vendedor'
+    Estado INTEGER NOT NULL DEFAULT 1 -- 1: Activo, 0: Inactivo
 );
 
 -- Tabla de Productos
 CREATE TABLE Productos (
     Id INTEGER PRIMARY KEY AUTOINCREMENT,
     Nombre TEXT NOT NULL,
-    PrecioUnitario REAL NOT NULL
+    PrecioUnitario REAL NOT NULL,
+    Estado INTEGER NOT NULL DEFAULT 1 -- 1: Activo, 0: Inactivo
 );
 
 -- Tabla de Formas de Pago
 CREATE TABLE FormasPago (
     Id INTEGER PRIMARY KEY AUTOINCREMENT,    
-    TipoPago TEXT NOT NULL -- Ejemplo: 'Efectivo', 'Tarjeta', 'Transferencia'        
+    TipoPago TEXT NOT NULL --- Ejemplo: 'Efectivo', 'Tarjeta', 'Transferencia'
 );
 
 -- Tabla de Facturas
@@ -39,6 +43,8 @@ CREATE TABLE Facturas (
     UsuarioId INTEGER NOT NULL,
     Fecha TEXT NOT NULL,
     MontoTotal REAL NOT NULL,
+    EstadoPago INTEGER NOT NULL DEFAULT 1, -- 0: PendienteCobro, 1: Pagado, 2: Cancelado
+    EstadoFactura INTEGER NOT NULL DEFAULT 1, -- 1: Activo, 0: Inactivo
     FOREIGN KEY (ClienteId) REFERENCES Clientes(Id),
     FOREIGN KEY (UsuarioId) REFERENCES Usuarios(Id)
 );
