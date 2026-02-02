@@ -7,3 +7,5 @@ Actual value was 14.
 [1/31/2026 4:53:01 AM] ERROR: Error al buscar facturas | Ex: An open reader is associated with this command. Close it before changing the CommandText property.
 [1/31/2026 5:01:59 AM] ERROR: Fallo al crear factura: string | Ex: SQLite Error 19: 'FOREIGN KEY constraint failed'.
 [1/31/2026 5:04:01 AM] ERROR: Fallo al crear factura: string | Ex: SQLite Error 19: 'UNIQUE constraint failed: Facturas.NumeroFactura'.
+[2/2/2026 12:02:22 AM] ERROR: Fallo al actualizar usuario ID: 3 | Ex: SQLite Error 1: 'near "@hash": syntax error'.
+[2/2/2026 4:01:55 AM] ERROR: Fallo al crear factura: ES1020260246 | Ex: SQLite Error 19: 'UNIQUE constraint failed: Facturas.NumeroFactura'.

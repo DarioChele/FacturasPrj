@@ -60,7 +60,7 @@ public class AuthService : IAuthService {
 
         return new JwtSecurityTokenHandler().WriteToken(token);
     }
-    private string GenerarHash(string password) {
+    public static string GenerarHash(string password) {
         return BCrypt.Net.BCrypt.HashPassword(password);
     }
 }

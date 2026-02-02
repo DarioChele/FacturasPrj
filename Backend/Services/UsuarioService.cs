@@ -11,15 +11,27 @@ public class UsuarioService : IUsuarioService {
 
     public async Task<int> RegistrarUsuario(Usuario UsuarioNuevo) {
         // 1. Encriptamos la contraseña aquí, fuera del repo
-        string hash = BCrypt.Net.BCrypt.HashPassword(UsuarioNuevo.PasswordHash);
-
+        string hash = AuthService.GenerarHash(UsuarioNuevo.PasswordHash);
         // 2. Mapeamos al modelo de base de datos
-        var nuevoUsuario = new Usuario {
-            Nombre = UsuarioNuevo.Nombre,
-            Rol = UsuarioNuevo.Rol,
-            PasswordHash = hash // <--- Aquí va el hash
-        };
+        var nuevoUsuario = MapearUsuario(UsuarioNuevo, hash);
         // 3. Mandamos al repo a guardar
         return await _repo.Crear(nuevoUsuario);
+    }
+    public async Task<bool> ActualizarUsuario(Usuario UsuarioNuevo) {
+        // 1. Encriptamos la contraseña aquí, fuera del repo
+        string hash = AuthService.GenerarHash(UsuarioNuevo.PasswordHash);
+        // 2. Mapeamos al modelo de base de datos
+        var nuevoUsuario = MapearUsuario(UsuarioNuevo, hash);
+        // 3. Mandamos al repo a guardar
+        return await _repo.Modificar(nuevoUsuario);
+    }
+    private Usuario MapearUsuario(Usuario usuario, string hash) {
+        return new Usuario {
+            Id = usuario.Id,
+            Nombre = usuario.Nombre,
+            Rol = usuario.Rol,
+            PasswordHash = hash,
+            Estado = usuario.Estado
+        };
     }
 }

@@ -98,11 +98,13 @@ namespace Backend.Persistence.Repositories;
             using var command = _contexto.ObtenerConexion().CreateCommand();
             command.CommandText = @"
                 UPDATE Usuarios 
-                SET Nombre = @nom, Rol = @rol
+                SET Nombre = @nom, Rol = @rol, PasswordHash = @hash, Estado = @est
                 WHERE Id = @id";
             command.Parameters.AddWithValue("@id", usuario.Id);
             command.Parameters.AddWithValue("@nom", usuario.Nombre);
             command.Parameters.AddWithValue("@rol", usuario.Rol);
+            command.Parameters.AddWithValue("@hash", usuario.PasswordHash);
+            command.Parameters.AddWithValue("@est", usuario.Estado);
 
             int filasAfectadas = await command.ExecuteNonQueryAsync();
             return filasAfectadas > 0;

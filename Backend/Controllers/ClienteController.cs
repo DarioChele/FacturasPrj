@@ -17,19 +17,10 @@ public class ClienteController : ControllerBase{
     }
 
     [HttpGet]
-    public async Task<IActionResult> Get() => Ok(await _repository.ObtenerTodos());
-
-    [HttpGet("{identificacion}")]
-    public async Task<IActionResult> Get(string identificacion) {
-        try {
-            // Pasamos los filtros al repositorio
-            var cliente = await _repository.ObtenerPorIdentificacion(identificacion);
-            return Ok(cliente);
-        } catch (Exception ex){
-            _logger.LogError(ex, "Error al buscar cliente por identificacion");
-            return StatusCode(500, new { Message = "Err." });
-        }
-    }
+    public async Task<IActionResult> Get(
+            [FromQuery] string? estado, 
+            [FromQuery] string? identificacion) 
+            => Ok(await _repository.ObtenerTodos(estado, identificacion));
 
 
     [HttpPost]

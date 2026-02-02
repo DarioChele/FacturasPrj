@@ -17,7 +17,15 @@ public class ProductoController : ControllerBase{
     }
 
     [HttpGet]
-    public async Task<IActionResult> Get() => Ok(await _repository.ObtenerTodos());
+    public async Task<IActionResult> Get([FromQuery] string? estado) => Ok(await _repository.ObtenerTodos(estado));
+    /*
+    [HttpGet]
+    public async Task<IActionResult> Get(
+            [FromQuery] string? estado, 
+            [FromQuery] string? identificacion) 
+            => Ok(await _repository.ObtenerTodos(estado, identificacion));
+    
+    */
     
     [HttpPost]
     public async Task<IActionResult> Post([FromBody] Producto producto){

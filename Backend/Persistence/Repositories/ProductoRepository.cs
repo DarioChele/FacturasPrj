@@ -11,12 +11,16 @@ public class ProductoRepository:IProductoRepository{
     _contexto = contexto;
     }
 
-    public async Task<List<ProductoDTO>> ObtenerTodos(){
+    public async Task<List<ProductoDTO>> ObtenerTodos(string? estado = null){
         var productos = new List<Producto>();
         try{
             await _contexto.OpenAsync();
             var command = _contexto.ObtenerConexion().CreateCommand();
             command.CommandText = "SELECT Id, Nombre, PrecioUnitario, Estado FROM Productos";
+            if (estado != null) {
+                command.CommandText += " WHERE Estado = @estado";
+                command.Parameters.AddWithValue("@estado", estado);
+            }
             
             using var reader = await command.ExecuteReaderAsync();
             while (await reader.ReadAsync()){
@@ -58,11 +62,12 @@ public class ProductoRepository:IProductoRepository{
             using var command = _contexto.ObtenerConexion().CreateCommand();
             command.CommandText = @"
                 UPDATE Productos 
-                SET Nombre = @nom, PrecioUnitario = @precio
+                SET Nombre = @nom, PrecioUnitario = @precio, Estado = @estado
                 WHERE Id = @id";
             command.Parameters.AddWithValue("@id", producto.Id);
             command.Parameters.AddWithValue("@nom", producto.Nombre);
             command.Parameters.AddWithValue("@precio", producto.PrecioUnitario);
+            command.Parameters.AddWithValue("@estado", producto.Estado);
 
             int filasAfectadas = await command.ExecuteNonQueryAsync();
             return filasAfectadas > 0;

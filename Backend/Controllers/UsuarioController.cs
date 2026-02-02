@@ -42,7 +42,7 @@ public class UsuarioController : ControllerBase{
         if (usuario == null || id != usuario.Id) return BadRequest("ID inconsistente");
 
         try {
-            bool actualizado = await _repository.Modificar(usuario);
+            bool actualizado = await _usuarioService.ActualizarUsuario(usuario);
             if (!actualizado) return NotFound(); // Usuario no encontrado            
             return StatusCode(201); 
         } catch (Exception ex) {

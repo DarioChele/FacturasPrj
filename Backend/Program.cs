@@ -63,6 +63,7 @@ builder.Services.AddScoped<IClienteRepository, ClienteRepository>();
 builder.Services.AddScoped<IProductoRepository, ProductoRepository>();
 builder.Services.AddScoped<IUsuarioRepository, UsuarioRepository>();
 builder.Services.AddScoped<IFacturaRepository, FacturaRepository>();
+builder.Services.AddScoped<IFormasPagoRepository, FormasPagoRepository>();
 /* Nota para el próximo desarrollador:
     AddScoped: Significa que por cada solicitud HTTP que llegue a la aplicación, se creará una nueva instancia del ClienteRepository. 
     Esta instancia será utilizada durante toda la vida de esa solicitud y luego se descartará.

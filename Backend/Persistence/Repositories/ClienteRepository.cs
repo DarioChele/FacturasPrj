@@ -10,12 +10,20 @@ public class ClienteRepository:IClienteRepository{
         _contexto = contexto;
     }
 
-    public async Task<List<ClienteDTO>> ObtenerTodos(){
+    public async Task<List<ClienteDTO>> ObtenerTodos( string? estado = null, string? identificacion = null){
         var clientes = new List<Cliente>();
         try{
             await _contexto.OpenAsync();
             var command = _contexto.ObtenerConexion().CreateCommand();
             command.CommandText = "SELECT Id, Identificacion, Nombre, Telefono, Correo, Estado FROM Clientes";
+            if (estado != null) {
+                command.CommandText += " WHERE Estado = @estado";
+                command.Parameters.AddWithValue("@estado", estado);
+            }
+            if (identificacion != null) {
+                command.CommandText += " AND Identificacion = @ident";
+                command.Parameters.AddWithValue("@ident", identificacion);
+            }
             
             using var reader = await command.ExecuteReaderAsync();
             while (await reader.ReadAsync()){
@@ -42,32 +50,6 @@ public class ClienteRepository:IClienteRepository{
         }).ToList();
         
     }
-
-
-    public async Task<ClienteDTO?> ObtenerPorIdentificacion(string identificacion){
-        var cliente = new ClienteDTO();
-        try{
-            await _contexto.OpenAsync();
-            var command = _contexto.ObtenerConexion().CreateCommand();
-            command.CommandText = "SELECT Id, Identificacion, Nombre, Telefono, Correo, Estado FROM Clientes WHERE Identificacion = @ident";
-            command.Parameters.AddWithValue("@ident", identificacion);
-            
-            using var reader = await command.ExecuteReaderAsync();
-            while (await reader.ReadAsync()){
-                cliente = new ClienteDTO {                    
-                    Id = reader.GetInt32(reader.GetOrdinal("Id")),
-                    Identificacion = reader.GetString(reader.GetOrdinal("Identificacion")),
-                    Nombre = reader.GetString(reader.GetOrdinal("Nombre")),
-                    Telefono = reader.IsDBNull(reader.GetOrdinal("Telefono")) ? null : reader.GetString(reader.GetOrdinal("Telefono")),
-                    Correo = reader.IsDBNull(reader.GetOrdinal("Correo")) ? null : reader.GetString(reader.GetOrdinal("Correo")),
-                    Estado = reader.GetInt32(reader.GetOrdinal("Estado"))
-                };
-            }
-        }
-        finally { _contexto.Close(); }
-        return cliente;
-    }
-
     public async Task<int> Crear(Cliente cliente){
         try{
             await _contexto.OpenAsync();
