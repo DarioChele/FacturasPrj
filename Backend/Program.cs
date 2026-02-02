@@ -41,12 +41,13 @@ builder.Services.AddSwaggerGen(c => {
 });
 
 // Configuración de CORS 
-builder.Services.AddCors(options => { 
-    options.AddPolicy("AllowAll", 
-            policy => policy.AllowAnyOrigin() 
-                            .AllowAnyMethod() 
-                            .AllowAnyHeader()); 
-                        });
+builder.Services.AddCors(options => {
+    options.AddPolicy("AllowAngular", 
+            policy => policy.AllowAnyOrigin()
+                            .AllowAnyMethod()
+                            .AllowAnyHeader());
+});
+    
 
 // Configuración de la conexión SQLite 
 builder.Services.AddScoped<ConexionSql>();
@@ -99,10 +100,9 @@ var app = builder.Build();
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment()){
     app.UseSwagger();
-    app.UseSwaggerUI();    
+    app.UseSwaggerUI();
 }
-
-app.UseCors("AllowAll"); 
+app.UseCors("AllowAngular");
 app.UseAuthentication();
 app.UseAuthorization();
 app.UseHttpsRedirection();
