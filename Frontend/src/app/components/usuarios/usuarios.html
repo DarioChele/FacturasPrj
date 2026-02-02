@@ -1,0 +1,75 @@
+<div class="container mt-4">
+  <div class="d-flex justify-content-between align-items-center mb-3">
+    <h2>Listado de Usuarios</h2>
+    <button class="btn btn-success" (click)="nuevoUsuario()">+ Nuevo Usuario</button>
+  </div>
+
+  <table class="table table-hover shadow-sm">
+    <thead class="table-dark">
+      <tr>
+        <th>Nombre</th>
+        <th>Rol</th>
+        <th>Estado</th>
+        <th class="text-center">Acciones</th>
+      </tr>
+    </thead>    
+    <tbody>
+    @for (c of listaUsuarios; track c.id) {
+        <tr>
+        <td>{{ c.nombre }}</td>
+        <td>
+            <span [class]="c.rol === 1 ? 'badge bg-info' : 'badge bg-primary'">
+              {{ c.rolDescripcion }}
+            </span>
+        </td>
+        <td>
+            <span [class]="c.estado === 1 ? 'badge bg-success' : 'badge bg-secondary'">
+              {{ c.estadoDescripcion }}
+            </span>
+        </td>
+        <td class="text-center">
+            <button class="btn btn-sm btn-info me-2" (click)="abrirModal(c)">Editar</button>
+            
+            @if (auth.esAdmin()) {
+            <button class="btn btn-sm btn-danger" (click)="borrar(c.id)">Eliminar</button>
+            }
+        </td>
+        </tr>
+    } @empty {
+        <tr>
+        <td colspan="4" class="text-center">No hay usuarios registrados.</td>
+        </tr>
+    }
+</tbody>
+  </table>
+</div>
+    @if (mostrarModal) {
+  <div class="modal d-block" style="background: rgba(0,0,0,0.7)">
+    <div class="modal-dialog">
+        <div class="modal-content">
+        <div class="modal-header">
+            <h5 class="modal-title">Datos del Usuario</h5>
+            <button type="button" class="btn-close" (click)="mostrarModal = false"></button>
+        </div>
+        <div class="modal-body">
+          <input type="text" [(ngModel)]="usuarioTmp.nombre" placeholder="Nombre" class="form-control mb-2">
+          <input type="text" [(ngModel)]="usuarioTmp.passwordHash" placeholder="Contraseña" class="form-control mb-2">
+
+          <select [(ngModel)]="usuarioTmp.rol" class="form-select mb-2">
+            <option [ngValue]="1">Vendedor</option>
+            <option [ngValue]="0">Administrador</option>
+          </select>
+
+          <select [(ngModel)]="usuarioTmp.estado" class="form-select mb-2">
+            <option [ngValue]="1">Activo</option>
+            <option [ngValue]="0">Inactivo</option>
+          </select>
+        </div>
+        <div class="modal-footer">
+            <button class="btn btn-secondary" (click)="mostrarModal = false">Cancelar</button>
+            <button class="btn btn-primary" (click)="guardar()">Guardar Usuario</button>
+        </div>
+        </div>
+    </div>
+    </div>
+}

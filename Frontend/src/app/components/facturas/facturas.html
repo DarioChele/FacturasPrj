@@ -1,0 +1,166 @@
+<div class="container mt-4">
+  <div class="d-flex justify-content-between align-items-center mb-3">
+    <h2>Listado de Facturas</h2>
+    <button class="btn btn-success" (click)="nuevoFactura()">+ Nueva Factura</button>
+  </div>
+
+  <div class="container mt-4">
+  <div class="card bg-light mb-4 shadow-sm">
+    <div class="card-body">
+      <h5 class="card-title mb-3"><i class="bi bi-search"></i> Filtros de Búsqueda</h5>
+      <div class="row g-3">
+        <div class="col-md-3">
+          <input type="text" class="form-control" placeholder="Número de Factura" [(ngModel)]="filtroNumero">
+        </div>
+        <div class="col-md-3">
+          <input type="date" class="form-control" [(ngModel)]="filtroFecha">
+        </div>
+        <div class="col-md-3">
+          <input type="number" class="form-control" placeholder="Monto aprox" [(ngModel)]="filtroMonto">
+        </div>
+        <div class="col-md-3 d-flex gap-2">
+          <button class="btn btn-primary w-100" (click)="cargarFacturas()">Buscar</button>
+          <button class="btn btn-outline-secondary" (click)="limpiarFiltros()">Limpiar</button>
+        </div>
+      </div>
+    </div>
+  </div>
+  </div>
+
+  <table class="table table-hover shadow-sm">
+    <thead class="table-dark">
+      <tr>
+        <th>Numero Fact.</th>
+        <th>Cliente Id.</th>
+        <th>Nombre Cliente</th>
+        <th>Vendedor</th>
+        <th>Fecha</th>
+        <th>Monto Total</th>
+        <th>Estado Pago</th>
+        <th>Estado Factura</th>
+        <th class="text-center">Acciones</th>
+      </tr>
+    </thead>    
+    <tbody>
+    @for (c of listaFacturas; track c.id) {
+        <tr>
+        <td>{{ c.numeroFactura }}</td>
+        <td>{{ c.clienteIdentificacion }}</td>
+        <td>{{ c.clienteNombre }}</td>
+        <td>{{ c.usuarioNombre }}</td>
+        <td>{{ c.fecha | date: 'dd/MM/yyyy hh:mm a' }}</td>
+        <td>{{ c.montoTotal }}</td>
+        <td>
+            <span [class]="c.estadoPago === 1 ? 'badge bg-success' : c.estadoPago === 0 ? 'badge bg-secondary' : 'badge bg-warning'">
+              {{ c.estadoPagoDescripcion }}
+            </span>
+        </td>
+        <td>
+            <span [class]="c.estadoFactura === 1 ? 'badge bg-success' : 'badge bg-secondary'">
+              {{ c.estadoFacturaDescripcion }}
+            </span>
+        </td>
+        <td class="text-center">
+            <button class="btn btn-sm btn-primary" (click)="abrirModal(c)">
+              <i class="bi bi-eye"></i> Visualizar
+            </button>
+          </td>
+        </tr>
+    } @empty {
+        <tr>
+        <td colspan="4" class="text-center">No hay facturas registrados.</td>
+        </tr>
+    }
+</tbody>
+  </table>
+</div>
+    @if (mostrarModal) {
+  <div class="modal d-block" style="background: rgba(0,0,0,0.7)">
+    <div class="modal-dialog">
+        <div class="modal-content">
+        <div class="modal-header">
+            <h5 class="modal-title">Datos del Factura</h5>
+            <button type="button" class="btn-close" (click)="mostrarModal = false"></button>
+        </div>
+        <!-- Aqui poríamos crear el windows.print -->
+        <div class="modal-body p-4" id="factura-imprimir">
+            <div class="text-center mb-4">
+                <h4>SISTEMA DE FACTURACIÓN</h4>
+                <p class="mb-0">Dirección de la Empresa</p>
+                <p>RUC: 0999999999001</p>
+            </div>
+
+            <div class="row mb-3">
+                <div class="col-6">
+                <strong>Nº Factura:</strong> {{ facturaTmp.numeroFactura }}<br>
+                <strong>Fecha:</strong> {{ facturaTmp.fecha | date:'dd/MM/yyyy HH:mm' }}
+                </div>
+                <div class="col-6 text-end">
+                <strong>Cliente:</strong> {{ facturaTmp.clienteNombre }}<br>
+                <strong>ID/RUC:</strong> {{ facturaTmp.clienteIdentificacion }}                
+                </div>
+                <div class="col-6">
+                    <strong>Estado Factura:</strong> {{ facturaTmp.estadoFacturaDescripcion }}                
+                </div>
+                <div class="col-6 text-end">
+                    <strong>Estado de Pago:</strong> {{ facturaTmp.estadoPagoDescripcion }}<br>
+                </div>
+            </div>
+
+            <table class="table table-sm">
+                <thead>
+                <tr>
+                    <th>Cant.</th>
+                    <th>Descripción</th>
+                    <th class="text-end">P. Unit</th>
+                    <th class="text-end">Total</th>
+                </tr>
+                </thead>
+                <tbody>
+                @for (d of facturaTmp.detalles; track $index) {
+                    <tr>
+                    <td>{{ d.cantidad }}</td>
+                    <td>{{ d.productoNombre }}</td>
+                    <td class="text-end">{{ d.precioUnitario | currency }}</td>
+                    <td class="text-end">{{ d.precioTotal | currency }}</td>
+                    </tr>
+                }
+                </tbody>
+            </table>
+            <div class="row">
+                <div class="col-8 text-end"><strong>Total Factura:</strong></div>
+                <div class="col-4 text-end"><strong>{{ facturaTmp.montoTotal | currency }}</strong></div>
+            </div>
+            <table class="table table-sm3">
+                <thead>
+                <tr>
+                    <th>Tipo Pago</th>                    
+                    <th class="text-end">Monto</th>
+                </tr>
+                </thead>
+                <tbody>
+                @for (d of facturaTmp.pagos; track $index) {
+                    <tr>
+                    <td>{{ d.formaPagoNombre }}</td>
+                    <td class="text-end">{{ d.valorPagado | currency }}</td>
+                    </tr>
+                }
+                </tbody>
+            </table>
+
+            <div class="row">
+                <div class="col-8 text-end"><strong>Total Pagado:</strong></div>
+                <div class="col-4 text-end"><strong>{{ facturaTmp.montoTotal | currency }}</strong></div>
+            </div>
+            </div>
+
+            <div class="modal-footer">
+                <button class="btn btn-secondary" (click)="mostrarModal = false">Cerrar</button>
+                <button class="btn btn-primary" (click)="imprimir()">
+                <i class="bi bi-printer"></i> Imprimir Factura
+                </button>
+            </div>
+        </div>
+    </div>
+    </div>
+}

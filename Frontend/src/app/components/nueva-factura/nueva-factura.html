@@ -1,0 +1,145 @@
+<div class="container mt-4 pb-5">
+  <div class="card shadow-lg border-0">
+    <div class="card-header bg-primary text-white d-flex justify-content-between">
+      <h4 class="mb-0">Emisión de Factura</h4>
+      <span class="badge bg-light text-dark">Vendedor: {{ vendedorNombre }}</span>
+    </div>
+    <div class="card-body">
+      <div class="row g-3 mb-4">
+        <div class="col-md-6">
+          <label class="form-label fw-bold">Buscar Cliente</label>
+          <select class="form-select" [(ngModel)]="factura.clienteId">
+            <option [value]="0">Seleccione un cliente...</option>
+            @for (c of clientes; track c.id) {
+              <option [value]="c.id">{{ c.nombre }} - C.I.# {{ c.identificacion }} </option>
+            }
+          </select>
+          @if (factura.clienteId > 0) {
+            <div class="mt-2 small text-muted">
+              <i class="bi bi-info-circle"></i> Enviar a: {{ obtenerInfoCliente().correo }} | Telf: {{ obtenerInfoCliente().telefono }}
+            </div>
+          }
+        </div>
+        <div class="col-md-3">
+          <label class="form-label fw-bold">Número Factura</label>
+          <input type="text" class="form-control" [(ngModel)]="factura.numeroFactura" placeholder="001-001-000001">
+        </div>
+        <div class="col-md-3">
+          <label class="form-label fw-bold">Fecha</label>
+          <input type="date" class="form-control" [ngModel]="factura.fecha | date:'yyyy-MM-dd'" readonly>
+        </div>
+      </div>
+
+      <hr>
+
+      <div class="bg-light p-3 rounded mb-4">
+        <div class="row g-2 align-items-end">
+          <div class="col-md-6">
+            <label class="form-label small">Producto</label>
+            <select class="form-select" [(ngModel)]="itemTmp.productoId">
+              <option [value]="0">Seleccione un producto...</option>
+              @for (p of productos; track p.id) {
+                <option [value]="p.id">{{ p.nombre }} - {{ p.precioUnitario | currency }}</option>
+              }
+            </select>
+          </div>
+          <div class="col-md-2">
+            <label class="form-label small">Cant.</label>
+            <input type="number" class="form-control" [(ngModel)]="itemTmp.cantidad">
+          </div>
+          <div class="col-md-4">
+            <button class="btn btn-dark w-100" (click)="agregarDetalle()">
+              <i class="bi bi-plus-lg"></i> Agregar Línea
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <table class="table table-sm align-middle">
+        <thead class="table-secondary">
+          <tr>
+            <th>Producto</th>
+            <th class="text-center">Cant.</th>
+            <th class="text-end">Precio U.</th>
+            <th class="text-end">Total</th>
+            <th></th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (d of factura.detalles; track $index) {
+            <tr>
+              <td>{{ d.productoNombre }}</td>
+              <td class="text-center">{{ d.cantidad }}</td>
+              <td class="text-end">{{ d.precioUnitario | currency }}</td>
+              <td class="text-end fw-bold">{{ d.precioTotal | currency }}</td>
+              <td class="text-end">
+                <button class="btn btn-sm btn-danger" (click)="quitarDetalle($index)">
+                  <i class="bi bi-x-circle-fill"></i> Eliminar
+                </button>
+              </td>
+            </tr>
+          }
+        </tbody>
+      </table>
+
+      <div class="row mt-4 align-items-center">
+        <div class="col-md-7">
+        </div>
+        <div class="row mt-4 align-items-end">
+            <div class="row mt-4">
+                    <div class="col-md-7">
+                        <div class="card border-0 shadow-sm">
+                        <div class="card-header bg-dark text-white">Gestión de Pagos</div>
+                        <div class="card-body">
+                            <div class="row g-2 mb-3">
+                            <div class="col-md-5">
+                                <select class="form-select" [(ngModel)]="pagoTmp.formaPagoId">
+                                @for (f of formasPago; track f.id) {
+                                    <option [value]="f.id">{{ f.tipoPago }}</option>
+                                }
+                                </select>
+                            </div>
+                            <div class="col-md-4">
+                                <input type="number" class="form-control" [(ngModel)]="pagoTmp.valor" placeholder="Valor">
+                            </div>
+                            <div class="col-md-3">
+                                <button class="btn btn-outline-primary w-100" (click)="agregarPago()">
+                                <i class="bi bi-plus-circle"></i> Añadir
+                                </button>
+                            </div>
+                            </div>
+
+                            <ul class="list-group list-group-flush">
+                            @for (p of factura.pagos; track $index) {
+                                <li class="list-group-item d-flex justify-content-between align-items-center">
+                                <span>{{ p.formaPagoNombre }}</span>
+                                <span class="fw-bold">{{ p.valorPagado | currency }}
+                                    <button class="btn btn-sm btn-danger ms-4" (click)="quitarPago($index)">
+                                    <i class="bi bi-trash"></i> Quitar
+                                    </button>
+                                </span>
+                                </li>
+                            }
+                            </ul>
+
+                            @if (saldoPendiente > 0) {
+                            <div class="alert alert-warning mt-2 mb-0 p-2 small">
+                                Faltan <strong>{{ saldoPendiente | currency }}</strong> por cubrir.
+                            </div>
+                            }
+                        </div>
+                        </div>
+                    </div>
+            <div class="col-md-5">
+            <div class="card bg-primary text-white p-3 text-end shadow">
+                <small>TOTAL A PAGAR</small>
+                <h1 class="display-5 mb-0 fw-bold">{{ factura.montoTotal | currency }}</h1>
+            </div>
+            <button class="btn btn-success btn-lg w-100 mt-3 shadow" (click)="guardar()">
+                <i class="bi bi-check2-circle"></i> GUARDAR Y FINALIZAR
+            </button>
+            </div>
+      </div>
+    </div>
+  </div>
+</div>
