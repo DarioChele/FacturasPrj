@@ -49,6 +49,11 @@ builder.Services.AddCors(options => {
 });
     
 
+var dbPath = Path.Combine(AppContext.BaseDirectory, "Database");
+if (!Directory.Exists(dbPath)){
+    Directory.CreateDirectory(dbPath);
+}
+
 // Configuración de la conexión SQLite 
 builder.Services.AddScoped<ConexionSql>();
 /* Nota para el próximo desarrollador:
