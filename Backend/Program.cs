@@ -99,9 +99,15 @@ builder.Services.AddAuthentication(options => {
 // Servicios
 builder.Services.AddScoped<IAuthService, AuthService>();
 builder.Services.AddScoped<IUsuarioService, UsuarioService>();
-
-
 var app = builder.Build();
+
+
+var dbFile = Path.Combine(AppContext.BaseDirectory, "Database", "facturacion.db");
+Console.WriteLine("DB Path: " + dbFile);
+Console.WriteLine("DB Exists: " + File.Exists(dbFile));
+
+
+
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment()|| app.Environment.IsProduction()){
