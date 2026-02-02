@@ -1,4 +1,4 @@
 export const environment = {
   production: true,
-  apiUrl: 'https://URL-Publica-Aqui/api'
+  apiUrl: 'https://facturas-backend-3nw7.onrender.com/api'
 };
