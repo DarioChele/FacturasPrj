@@ -1,7 +1,17 @@
+export interface DetalleProveedor {
+  proveedorId: number;
+  nombreProveedor: string;
+  precio: number;
+  stock: number;
+  numeroLote: string;
+}
+
 export interface Producto {
-  id?: number;              // '?' porque al crear no tiene ID
+  id: number;
   nombre: string;
-  precioUnitario: number;   // Usamos camelCase para coincidir con el JSON
-  estado: number;           // 1 para Activo, 0 para Inactivo
-  estadoDescripcion?: string; // Solo viene en el DTO (opcional)
+  precioUnitario: number;
+  estado: number;
+  estadoDescripcion: string;
+  stockTotal: number;
+  proveedores: DetalleProveedor[];
 }

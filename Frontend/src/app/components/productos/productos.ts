@@ -12,10 +12,9 @@ export class Productos implements OnInit {
   // 1. Definimos las propiedades que usará el HTML
   listaProductos: Producto[] = [];
   mostrarModal = false;
-  //productoTmp: any = {};
   productoTmp: Producto = {} as Producto;
-
-  // 2. EL CONSTRUCTOR: Aquí es donde "nace" ProductoService
+  detallesVisibles: { [id: number]: boolean } = {};
+  
   constructor(
               private productoService: ProductoService, 
               public auth: AuthService, 
@@ -25,6 +24,10 @@ export class Productos implements OnInit {
   // 3. ngOnInit: Se ejecuta cuando la página carga
   ngOnInit(): void {
     this.cargarProductos();
+  }
+
+  toggleDetalle(id: number) {
+    this.detallesVisibles[id] = !this.detallesVisibles[id];
   }
 
   // 4. FUNCIÓN cargarProductos

@@ -12,33 +12,56 @@ public class ProductoRepository:IProductoRepository{
     }
 
     public async Task<List<ProductoDTO>> ObtenerTodos(string? estado = null){
-        var productos = new List<Producto>();
+        var productosDict = new Dictionary<int, ProductoDTO>();
         try{
             await _contexto.OpenAsync();
             var command = _contexto.ObtenerConexion().CreateCommand();
-            command.CommandText = "SELECT Id, Nombre, PrecioUnitario, Estado FROM Productos";
+            command.CommandText = @"
+                SELECT 
+                    pp.Id AS ProductoProveedorId,
+                    pp.ProductoId AS ProductoId,
+                    p.Nombre AS NombreProducto,
+                    p.Estado,
+                    p.PrecioUnitario AS PrecioUnitario,
+                    pp.ProveedorId AS ProveedorId,
+                    pr.Nombre AS NombreProveedor,
+                    pp.Precio,
+                    pp.Stock,
+                    pp.NumeroLote
+                FROM ProductoProveedor pp
+                INNER JOIN Productos p ON pp.ProductoId = p.Id
+                INNER JOIN Proveedores pr ON pp.ProveedorId = pr.Id";
             if (estado != null) {
-                command.CommandText += " WHERE Estado = @estado";
+                command.CommandText += " WHERE p.Estado = @estado";
                 command.Parameters.AddWithValue("@estado", estado);
             }
             
             using var reader = await command.ExecuteReaderAsync();
             while (await reader.ReadAsync()){
-                productos.Add(new Producto {
-                    Id = reader.GetInt32(reader.GetOrdinal("Id")),
-                    Nombre = reader.GetString(reader.GetOrdinal("Nombre")),
-                    PrecioUnitario = reader.GetDecimal(reader.GetOrdinal("PrecioUnitario")),
-                    Estado = reader.GetInt32(reader.GetOrdinal("Estado"))
-                });
+                int productoId = reader.GetInt32(reader.GetOrdinal("ProductoId")); 
+                if (!productosDict.ContainsKey(productoId)) { 
+                    productosDict[productoId] = new ProductoDTO { 
+                        Id = productoId, 
+                        Nombre = reader.GetString(reader.GetOrdinal("NombreProducto")),
+                        PrecioUnitario = reader.GetDecimal(reader.GetOrdinal("PrecioUnitario")),
+                        Estado = reader.GetInt32(reader.GetOrdinal("Estado")), 
+                        StockTotal = 0, 
+                        Proveedores = new List<DetalleProveedorDTO>() }; 
+                }
+                var detalle = new DetalleProveedorDTO { 
+                    ProveedorId = reader.GetInt32(reader.GetOrdinal("ProveedorId")), 
+                    NombreProveedor = reader.GetString(reader.GetOrdinal("NombreProveedor")), 
+                    Precio = reader.GetDecimal(reader.GetOrdinal("Precio")), 
+                    Stock = reader.GetInt32(reader.GetOrdinal("Stock")), 
+                    NumeroLote = reader.GetString(reader.GetOrdinal("NumeroLote")) 
+                }; 
+                productosDict[productoId].Proveedores.Add(detalle); 
+                // 🔑 Aquí actualizamos el stock total acumulando 
+                productosDict[productoId].StockTotal += detalle.Stock;
             }
         } finally { _contexto.Close(); }
 
-        return productos.Select(p => new ProductoDTO {
-            Id = p.Id,
-            Nombre = p.Nombre,
-            PrecioUnitario = p.PrecioUnitario,
-            Estado = p.Estado
-        }).ToList();
+        return productosDict.Values.ToList();
     }
 
     public async Task<int> Crear(Producto producto){

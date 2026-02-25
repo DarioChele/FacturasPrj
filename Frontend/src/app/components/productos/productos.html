@@ -8,21 +8,30 @@
       <thead class="table-dark">
         <tr>
           <th>Nombre</th>
-          <th>Precio</th>
+          <th>P.v.p</th>
           <th>Estado</th>
+          <th>Stock Total</th>
+          <th>Num Proveedores</th>
           <th class="text-center">Acciones</th>
         </tr>
       </thead>    
       <tbody>
       @for (c of listaProductos; track c.id) {
           <tr>
-            <td>{{ c.nombre }}</td>
+            <td> 
+              <button class="btn btn-link p-0" (click)="toggleDetalle(c.id)"> 
+                <i [class]="detallesVisibles[c.id] ? 'bi bi-chevron-down' : 'bi bi-chevron-right'"></i> 
+              </button> 
+              {{ c.nombre }} 
+            </td>
             <td>{{ c.precioUnitario }}</td>
             <td>
                 <span [class]="c.estado === 1 ? 'badge bg-success' : 'badge bg-secondary'">
                   {{ c.estadoDescripcion }}
                 </span>
             </td>
+            <td>{{ c.stockTotal }}</td>
+            <td>{{ c.proveedores.length }}</td>
             <td class="text-center">
               <div class="d-flex justify-content-center gap-2"> <button class="btn btn-sm btn-info text-white" (click)="abrirModal(c)">
                   <i class="bi bi-pencil"></i> <span class="d-none d-md-inline"> Editar</span> </button>
@@ -36,6 +45,41 @@
               </div>
             </td>
           </tr>
+
+          <tr [class.collapse]="!detallesVisibles[c.id]"> 
+            <td colspan="6"> 
+              <table class="table table-sm mb-0"> 
+                <thead> 
+                  <tr> 
+                    <th>Proveedor</th> 
+                    <th>Precio</th> 
+                    <th>Stock</th> 
+                    <th>Número Lote</th> 
+                  </tr> 
+                </thead> 
+                <tbody> 
+                  @for (prov of c.proveedores; track prov.proveedorId) { 
+                    <tr> 
+                      <td>{{ prov.nombreProveedor }}</td> 
+                      <td>{{ prov.precio }}</td> 
+                      <td>{{ prov.stock }}</td> 
+                      <td>{{ prov.numeroLote }}</td> 
+                    </tr> 
+                  } 
+                </tbody> 
+              </table>
+            </td> 
+          </tr>
+
+
+
+
+
+
+
+
+
+
       } @empty {
           <tr>
           <td colspan="4" class="text-center">No hay productos registrados.</td>
