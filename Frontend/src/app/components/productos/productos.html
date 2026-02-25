@@ -1,43 +1,49 @@
 <div class="container mt-4">
-  <div class="d-flex justify-content-between align-items-center mb-3">
+  <div class="d-flex flex-column flex-md-row justify-content-between align-items-center mb-3">
     <h2>Listado de Productos</h2>
     <button class="btn btn-success" (click)="nuevoProducto()">+ Nuevo Producto</button>
   </div>
-
-  <table class="table table-hover shadow-sm">
-    <thead class="table-dark">
-      <tr>
-        <th>Nombre</th>
-        <th>Precio</th>
-        <th>Estado</th>
-        <th class="text-center">Acciones</th>
-      </tr>
-    </thead>    
-    <tbody>
-    @for (c of listaProductos; track c.id) {
+  <div class="table-responsive shadow-sm rounded"> 
+    <table class="table table-hover shadow-sm">
+      <thead class="table-dark">
         <tr>
-        <td>{{ c.nombre }}</td>
-        <td>{{ c.precioUnitario }}</td>
-        <td>
-            <span [class]="c.estado === 1 ? 'badge bg-success' : 'badge bg-secondary'">
-              {{ c.estadoDescripcion }}
-            </span>
-        </td>
-        <td class="text-center">
-            <button class="btn btn-sm btn-info me-2" (click)="abrirModal(c)">Editar</button>
-            
-            @if (auth.esAdmin()) {
-            <button class="btn btn-sm btn-danger" (click)="borrar(c.id)">Eliminar</button>
-            }
-        </td>
+          <th>Nombre</th>
+          <th>Precio</th>
+          <th>Estado</th>
+          <th class="text-center">Acciones</th>
         </tr>
-    } @empty {
-        <tr>
-        <td colspan="4" class="text-center">No hay productos registrados.</td>
-        </tr>
-    }
-</tbody>
+      </thead>    
+      <tbody>
+      @for (c of listaProductos; track c.id) {
+          <tr>
+            <td>{{ c.nombre }}</td>
+            <td>{{ c.precioUnitario }}</td>
+            <td>
+                <span [class]="c.estado === 1 ? 'badge bg-success' : 'badge bg-secondary'">
+                  {{ c.estadoDescripcion }}
+                </span>
+            </td>
+            <td class="text-center">
+              <div class="d-flex justify-content-center gap-2"> <button class="btn btn-sm btn-info text-white" (click)="abrirModal(c)">
+                  <i class="bi bi-pencil"></i> <span class="d-none d-md-inline"> Editar</span> </button>
+                
+                @if (auth.esAdmin()) {
+                  <button class="btn btn-sm btn-danger" (click)="borrar(c.id)">
+                    <i class="bi bi-trash"></i>
+                    <span class="d-none d-md-inline"> Eliminar</span>
+                  </button>
+                }
+              </div>
+            </td>
+          </tr>
+      } @empty {
+          <tr>
+          <td colspan="4" class="text-center">No hay productos registrados.</td>
+          </tr>
+      }
+  </tbody>
   </table>
+  </div>
 </div>
     @if (mostrarModal) {
   <div class="modal d-block" style="background: rgba(0,0,0,0.7)">

@@ -11,6 +11,7 @@ import { Productos } from './components/productos/productos';
 import { Usuarios } from './components/usuarios/usuarios';
 import { Facturas } from './components/facturas/facturas';
 import { NuevaFactura } from './components/nueva-factura/nueva-factura';
+import { Proveedores } from './components/proveedores/proveedores';
 
 @NgModule({
   declarations: [
@@ -20,7 +21,8 @@ import { NuevaFactura } from './components/nueva-factura/nueva-factura';
     Productos,
     Usuarios,
     Facturas,
-    NuevaFactura
+    NuevaFactura,
+    Proveedores
   ],
   imports: [
     BrowserModule,

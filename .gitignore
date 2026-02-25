@@ -2,6 +2,7 @@
 Backend/bin/
 Backend/obj/
 *.log
+*.notes
 
 # Frontend Angular
 Frontend/node_modules/

@@ -1,7 +1,7 @@
 <div class="container mt-4">  
   <div class="d-flex flex-column flex-md-row justify-content-between align-items-center mb-3">
-    <h2>Listado de Clientes</h2>
-    <button class="btn btn-success" (click)="nuevoCliente()">+ Nuevo Cliente</button>
+    <h2>Listado de Proveedores</h2>
+    <button class="btn btn-success" (click)="nuevoProveedor()">+ Nuevo Proveedor</button>
   </div>
   <div class="table-responsive shadow-sm rounded">
     <table class="table table-hover shadow-sm">
@@ -15,7 +15,7 @@
         </tr>
       </thead>    
       <tbody>
-      @for (c of listaClientes; track c.id) {
+      @for (c of listaProveedores; track c.id) {
         <tr>
           <td>{{ c.nombre }}</td>
           <td>{{ c.identificacion }}</td>
@@ -40,7 +40,7 @@
           </tr>
       } @empty {
           <tr>
-          <td colspan="4" class="text-center">No hay clientes registrados.</td>
+          <td colspan="4" class="text-center">No hay Proveedors registrados.</td>
           </tr>
       }
   </tbody>
@@ -52,18 +52,18 @@
     <div class="modal-dialog">
         <div class="modal-content">
         <div class="modal-header">
-            <h5 class="modal-title">Datos del Cliente</h5>
+            <h5 class="modal-title">Datos del Proveedor</h5>
             <button type="button" class="btn-close" (click)="mostrarModal = false"></button>
         </div>
         <div class="modal-body">
-            <input type="text" [(ngModel)]="clienteTmp.nombre" placeholder="Nombre" class="form-control mb-2">
-            <input type="text" [(ngModel)]="clienteTmp.identificacion" placeholder="Cédula/RUC" class="form-control mb-2">
-            <input type="text" [(ngModel)]="clienteTmp.telefono" placeholder="Teléfono" class="form-control mb-2">
-            <input type="email" [(ngModel)]="clienteTmp.correo" placeholder="Email" class="form-control mb-2">
+            <input type="text" [(ngModel)]="ProveedorTmp.nombre" placeholder="Nombre" class="form-control mb-2">
+            <input type="text" [(ngModel)]="ProveedorTmp.identificacion" placeholder="Cédula/RUC" class="form-control mb-2">
+            <input type="text" [(ngModel)]="ProveedorTmp.telefono" placeholder="Teléfono" class="form-control mb-2">
+            <input type="email" [(ngModel)]="ProveedorTmp.correo" placeholder="Email" class="form-control mb-2">
         </div>
         <div class="modal-footer">
             <button class="btn btn-secondary" (click)="mostrarModal = false">Cancelar</button>
-            <button class="btn btn-primary" (click)="guardar()">Guardar Cliente</button>
+            <button class="btn btn-primary" (click)="guardar()">Guardar Proveedor</button>
         </div>
         </div>
     </div>

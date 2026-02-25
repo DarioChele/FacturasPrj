@@ -12,6 +12,16 @@ CREATE TABLE Clientes (
     Estado INTEGER NOT NULL DEFAULT 1 -- 1: Activo, 0: Inactivo
 );
 
+CREATE TABLE Proveedores (
+    Id INTEGER PRIMARY KEY AUTOINCREMENT,
+    Identificacion TEXT NOT NULL,
+    Nombre TEXT NOT NULL,
+    Telefono TEXT,
+    Correo TEXT,
+    Estado INTEGER NOT NULL DEFAULT 1 -- 1: Activo, 0: Inactivo
+);
+
+
 -- Tabla de Usuarios/Vendedores
 CREATE TABLE Usuarios (
     Id INTEGER PRIMARY KEY AUTOINCREMENT,

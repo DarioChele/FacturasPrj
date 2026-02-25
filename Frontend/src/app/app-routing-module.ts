@@ -8,14 +8,16 @@ import { Productos } from './components/productos/productos';
 import { Usuarios } from './components/usuarios/usuarios';
 import { Facturas } from './components/facturas/facturas';
 import { NuevaFactura } from './components/nueva-factura/nueva-factura';
+import { Proveedores } from './components/proveedores/proveedores';
 
 const routes: Routes = [
   {path: 'login', component: Login},
   {path: 'clientes', component: Clientes, canActivate: [authGuard]},
+  {path: 'proveedores', component: Proveedores, canActivate: [authGuard]},
   {path: 'productos', component: Productos, canActivate: [authGuard]},
   {path: 'usuarios', component: Usuarios, canActivate: [authGuard]},
   {path: 'facturas', component: Facturas, canActivate: [authGuard]},
-  {path: 'nueva-factura', component: NuevaFactura, canActivate: [authGuard]},
+  {path: 'nueva-factura', component: NuevaFactura, canActivate: [authGuard]},  
   {path: '', redirectTo: '/login', pathMatch: 'full' },
   // Esta es la ruta "comodín" por si escriben cualquier cosa
   { path: '**', redirectTo: '/login' }

@@ -2,6 +2,7 @@ import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
 import { ClienteService } from '../../services/cliente.service';
 import { Cliente } from '../../models/cliente.interface';
 import { AuthService } from '../../services/auth.service';
+
 @Component({
   selector: 'app-clientes',
   standalone: false,

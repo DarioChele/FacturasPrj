@@ -1,11 +1,11 @@
-<div class="container mt-4">
-  <div class="d-flex justify-content-between align-items-center mb-3">
+<div class="container mt-4">  
+  <div class="d-flex flex-column flex-md-row justify-content-between align-items-center mb-3">
     <h2>Listado de Facturas</h2>
-    <button class="btn btn-success" (click)="nuevoFactura()">+ Nueva Factura</button>
+    <button class="btn btn-success w-100 w-md-auto" (click)="nuevoFactura()">+ Nueva Factura</button>
   </div>
 
   <div class="container mt-4">
-  <div class="card bg-light mb-4 shadow-sm">
+  <div class="card bg-light mb-4 shadow-sm flex-md-row">
     <div class="card-body">
       <h5 class="card-title mb-3"><i class="bi bi-search"></i> Filtros de Búsqueda</h5>
       <div class="row g-3">
@@ -26,7 +26,7 @@
     </div>
   </div>
   </div>
-
+<div class="table-responsive shadow-sm rounded">
   <table class="table table-hover shadow-sm">
     <thead class="table-dark">
       <tr>
@@ -73,13 +73,14 @@
     }
 </tbody>
   </table>
+  </div>
 </div>
     @if (mostrarModal) {
   <div class="modal d-block" style="background: rgba(0,0,0,0.7)">
     <div class="modal-dialog">
         <div class="modal-content">
         <div class="modal-header">
-            <h5 class="modal-title">Datos del Factura</h5>
+            <h5 class="modal-title">Datos de la Factura</h5>
             <button type="button" class="btn-close" (click)="mostrarModal = false"></button>
         </div>
         <!-- Aqui poríamos crear el windows.print -->
