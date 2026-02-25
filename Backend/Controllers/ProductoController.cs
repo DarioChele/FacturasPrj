@@ -29,7 +29,8 @@ public class ProductoController : ControllerBase{
     
     [HttpPost]
     public async Task<IActionResult> Post([FromBody] Producto producto){
-        if (producto == null) return BadRequest(); // Sin mensajes innecesarios
+        if (producto == null) return BadRequest(); 
+        if (producto.Proveedores == null || !producto.Proveedores.Any()) return BadRequest(); 
 
         try{
             var id = await _repository.Crear(producto);
@@ -40,6 +41,7 @@ public class ProductoController : ControllerBase{
             return StatusCode(500, new { Message = "Err." });
         }
     }
+    
     [HttpPut("{id}")] 
     public async Task<IActionResult> Put(int id, [FromBody] Producto producto) {
         // Verificamos que el ID de la URL coincida con el del objeto

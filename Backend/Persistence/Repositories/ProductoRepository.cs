@@ -64,7 +64,7 @@ public class ProductoRepository:IProductoRepository{
         return productosDict.Values.ToList();
     }
 
-    public async Task<int> Crear(Producto producto){
+    public async Task<int> Crear_(Producto producto){
         try{
             await _contexto.OpenAsync();
             var command = _contexto.ObtenerConexion().CreateCommand();
@@ -79,6 +79,84 @@ public class ProductoRepository:IProductoRepository{
             return Convert.ToInt32(await command.ExecuteScalarAsync());
         }finally { _contexto.Close(); }
     }
+    public async Task<int> Crear(Producto producto) {
+        try {
+            await _contexto.OpenAsync();            
+            await _contexto.InitTranAsync();
+            var connection = _contexto.ObtenerConexion();
+
+            // 1. Insertar Cabecera
+            var cmdHeader = connection.CreateCommand();
+            cmdHeader.CommandText = @"
+                INSERT INTO Productos (Nombre, PrecioUnitario) 
+                VALUES (@nom, @precio);
+                SELECT last_insert_rowid();";
+            cmdHeader.Parameters.AddWithValue("@nom", producto.Nombre);
+            cmdHeader.Parameters.AddWithValue("@precio", producto.PrecioUnitario);            
+            
+            int productoId = Convert.ToInt32(await cmdHeader.ExecuteScalarAsync());
+
+            // 2. Insertar Detalles
+            foreach (var proveedor in producto.Proveedores) {
+                var cmdDetail = connection.CreateCommand();
+                cmdDetail.CommandText = @"
+                    INSERT INTO ProductoProveedor (ProductoId, ProveedorId, NumeroLote, Precio, Stock) 
+                    VALUES (@productoId, @proveedorId, @numeroLote, @precio, @stock);";
+                cmdDetail.Parameters.AddWithValue("@productoId", productoId);
+                cmdDetail.Parameters.AddWithValue("@proveedorId", proveedor.ProveedorId);
+                cmdDetail.Parameters.AddWithValue("@numeroLote", proveedor.NumeroLote);
+                cmdDetail.Parameters.AddWithValue("@precio", proveedor.Precio);
+                cmdDetail.Parameters.AddWithValue("@stock", proveedor.Stock);
+                await cmdDetail.ExecuteNonQueryAsync();
+            }
+            await _contexto.CommitTranAsync(); // Si todo salió bien
+            return productoId;
+        }
+        catch (Exception ex) {
+            
+            await _contexto.RollBackAsync(); // Si algo falló, deshace todo
+            throw;
+        }
+    }   
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
     public async Task<bool> Modificar(Producto producto){
         try{
             await _contexto.OpenAsync();

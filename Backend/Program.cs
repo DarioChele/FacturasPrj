@@ -65,6 +65,7 @@ builder.Services.AddSingleton<IFileLogger, FileLogger>();
 
 // Repositorios
 builder.Services.AddScoped<IClienteRepository, ClienteRepository>();
+builder.Services.AddScoped<IProveedorRepository, ProveedorRepository>();
 builder.Services.AddScoped<IProductoRepository, ProductoRepository>();
 builder.Services.AddScoped<IUsuarioRepository, UsuarioRepository>();
 builder.Services.AddScoped<IFacturaRepository, FacturaRepository>();
@@ -96,7 +97,7 @@ builder.Services.AddAuthentication(options => {
     };
 });
 
-// Servicios
+// Servicios para autenticacion
 builder.Services.AddScoped<IAuthService, AuthService>();
 builder.Services.AddScoped<IUsuarioService, UsuarioService>();
 var app = builder.Build();

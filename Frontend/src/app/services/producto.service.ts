@@ -19,6 +19,7 @@ export class ProductoService {
     return this.http.get<Producto[]>(this.apiUrl, { params } );
   }
   crear(producto: Producto): Observable<Producto> {
+    console.log("Enviamos a guardar el producto --> " + producto);
     return this.http.post<Producto>(this.apiUrl, producto);
   }
   actualizar(producto: Producto): Observable<Producto> {

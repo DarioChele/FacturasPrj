@@ -12,6 +12,7 @@ import { Usuarios } from './components/usuarios/usuarios';
 import { Facturas } from './components/facturas/facturas';
 import { NuevaFactura } from './components/nueva-factura/nueva-factura';
 import { Proveedores } from './components/proveedores/proveedores';
+import { NuevoProducto } from './components/nuevo-producto/nuevo-producto';
 
 @NgModule({
   declarations: [
@@ -22,7 +23,8 @@ import { Proveedores } from './components/proveedores/proveedores';
     Usuarios,
     Facturas,
     NuevaFactura,
-    Proveedores
+    Proveedores,
+    NuevoProducto
   ],
   imports: [
     BrowserModule,

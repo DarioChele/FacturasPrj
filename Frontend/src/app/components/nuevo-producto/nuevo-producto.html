@@ -1,0 +1,94 @@
+<div class="container mt-4 pb-5">
+  <div class="card shadow-lg border-0">
+    <div class="card-header bg-primary text-white d-flex justify-content-between">      
+      <h4 class="mb-0">Creación de Nuevo Producto</h4>
+      <span class="badge bg-light text-dark">Vendedor: {{ vendedorNombre }}</span>
+    </div>
+    <div class="card-body">
+      <div class="row g-3 mb-4">
+        <div class="col-md-6">
+          <label class="form-label fw-bold">Nombre Producto</label>
+          <input type="text" class="form-control" [(ngModel)]="producto.nombre" placeholder="Nombre Producto">
+        </div>
+        <div class="col-md-3">
+          <label class="form-label fw-bold">Precio Venta al Publico</label>
+          <input type="number" class="form-control" [(ngModel)]="producto.precioUnitario" placeholder="Nombre Producto">
+        </div>
+      </div>
+
+      <hr>
+
+      <div class="bg-light p-3 rounded mb-4">
+        <div class="row g-2 align-items-end">
+          <div class="col-md-4">
+            <label class="form-label small">Proveedor</label>
+            <select class="form-select" [(ngModel)]="proveedorTmp.proveedorId">
+              <option [value]="0">Seleccione un proveedor...</option>
+              @for (p of proveedores; track p.id) {
+                <option [value]="p.id">{{ p.nombre }} - {{ p.descripcion}}</option>
+              }
+            </select>
+          </div>
+          <div class="col-md-2">
+            <label class="form-label small">Stock</label>
+            <input type="number" class="form-control" [(ngModel)]="proveedorTmp.stock">
+          </div>
+          <div class="col-md-2">
+            <label class="form-label small">Precio Compra</label>
+            <input type="number" class="form-control" [(ngModel)]="proveedorTmp.precio">
+          </div>
+          <div class="col-md-2">
+            <label class="form-label small"># Lote</label>
+            <input type="text" class="form-control" [(ngModel)]="proveedorTmp.numeroLote">
+          </div>
+          <div class="col-md-2">
+            <button class="btn btn-dark w-100" (click)="agregarDetalle()">
+              <i class="bi bi-plus-lg"></i> Agregar Línea
+            </button>
+          </div>
+        </div>
+      </div>
+      <div class="table-responsive shadow-sm rounded">
+        <table class="table table-sm align-middle">
+        <thead class="table-secondary">
+          <tr>
+            <th>Proveedor</th>
+            <th class="text-center">Cant.</th>
+            <th class="text-center">Precio U.</th>
+            <th class="text-center"># Lote</th>
+            <th></th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (d of producto.proveedores; track $index) {
+            <tr>
+              <td>{{ d.nombreProveedor }}</td>              
+              <td class="text-end">{{ d.stock }}</td>
+              <td class="text-end">{{ d.precio | currency }}</td>
+              <td class="text-end">{{ d.numeroLote }}</td>
+              <td class="text-end">
+                <button class="btn btn-sm btn-danger" (click)="quitarDetalle($index)">
+                  <i class="bi bi-trash"></i> 
+                  <span class="d-none d-md-inline"> Eliminar</span>
+                </button>
+              </td>
+            </tr>
+          }
+        </tbody>
+        </table>
+        </div>
+      <div class="row mt-4 align-items-center">
+        <div class="col-md-7">
+        </div>
+        <div class="row mt-4 align-items-end">
+            <div class="row mt-4">
+                    
+            <div class="col-md-5">            
+                <button class="btn btn-success btn-lg w-100 mt-3 shadow" (click)="guardar()">
+                    <i class="bi bi-check2-circle"></i> GUARDAR Y FINALIZAR
+                </button>
+            </div>
+      </div>
+    </div>
+  </div>
+</div>

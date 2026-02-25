@@ -1,4 +1,5 @@
 import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
+import { Router } from '@angular/router'; 
 import { ProductoService } from '../../services/producto.service';
 import { Producto } from '../../models/producto.interface';
 import { AuthService } from '../../services/auth.service';
@@ -15,7 +16,7 @@ export class Productos implements OnInit {
   productoTmp: Producto = {} as Producto;
   detallesVisibles: { [id: number]: boolean } = {};
   
-  constructor(
+  constructor(private router: Router,
               private productoService: ProductoService, 
               public auth: AuthService, 
               private cdr: ChangeDetectorRef
@@ -33,7 +34,7 @@ export class Productos implements OnInit {
   // 4. FUNCIÓN cargarProductos
   cargarProductos() {
     this.productoService.getTodos().subscribe({
-      next: (res) => {        
+      next: (res) => {
         this.listaProductos = res; // <--- ESTO es lo que llena la tabla
         this.cdr.detectChanges();
       },
@@ -44,8 +45,9 @@ export class Productos implements OnInit {
   }
 
   nuevoProducto() {
-    this.productoTmp = {} as Producto;
-    this.mostrarModal = true;
+    //this.productoTmp = {} as Producto;
+    //this.mostrarModal = true;
+    this.router.navigate(['/nuevo-producto']);
   }
   abrirModal(producto?: Producto) {
     if (producto) {

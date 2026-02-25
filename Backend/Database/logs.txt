@@ -9,3 +9,7 @@ Actual value was 14.
 [1/31/2026 5:04:01 AM] ERROR: Fallo al crear factura: string | Ex: SQLite Error 19: 'UNIQUE constraint failed: Facturas.NumeroFactura'.
 [2/2/2026 12:02:22 AM] ERROR: Fallo al actualizar usuario ID: 3 | Ex: SQLite Error 1: 'near "@hash": syntax error'.
 [2/2/2026 4:01:55 AM] ERROR: Fallo al crear factura: ES1020260246 | Ex: SQLite Error 19: 'UNIQUE constraint failed: Facturas.NumeroFactura'.
+[2/25/2026 6:14:52 PM] ERROR: Fallo al crear producto: Router SCS - 600 | Ex: Must add values for the following parameters: @proveedorpId
+[2/25/2026 6:16:06 PM] ERROR: Fallo al crear producto: Router SCS - 600 | Ex: Must add values for the following parameters: @proveedorpId
+[2/25/2026 6:21:39 PM] ERROR: Fallo al crear producto: Router SCS | Ex: Must add values for the following parameters: @proveedorpId
+[2/25/2026 6:22:11 PM] ERROR: Fallo al crear producto: Router SCS | Ex: Must add values for the following parameters: @proveedorpId
