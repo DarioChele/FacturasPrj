@@ -1,19 +1,52 @@
 using Backend.Persistence.Context;
 using Backend.Persistence.Repositories;
 using Backend.Persistence.Repositories.Interfaces;
-using Backend.Persistence.Logging;
 using Backend.Services;
 using System.Text;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
+using CorrelationId;
+using CorrelationId.DependencyInjection;
+using Serilog;
+
+
 var builder = WebApplication.CreateBuilder(args);
 
-// Add services to the container.
-// Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
+
 // 1. Servicios básicos
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
+// Configuración de Serilog
+// Log.Logger = new LoggerConfiguration() 
+//         .Enrich.FromLogContext()
+//         .Enrich.WithCorrelationId() // <----
+//         .MinimumLevel.Debug() 
+//         .WriteTo.Console(outputTemplate: "[{Timestamp:yyyy-MM-dd HH:mm:ss.fff zzz} {Level:u3}] {Message:lj} [CorrelationId:{CorrelationId}]{NewLine}{Exception}")
+//         .WriteTo.File("Database/logs.txt", 
+//                 rollingInterval: RollingInterval.Day, 
+//                 outputTemplate: "[{Timestamp:yyyy-MM-dd HH:mm:ss.fff zzz} {Level:u3}] {Message:lj} [CorrelationId:{CorrelationId}]{NewLine}{Exception}")
+//         .CreateLogger();
+
+builder.Host.UseSerilog((context, services, configuration) => 
+    configuration
+        .ReadFrom.Configuration(context.Configuration)
+        .ReadFrom.Services(services)   // <-- Esto inyecta ICorrelationContextAccessor
+        .Enrich.FromLogContext()
+        .Enrich.WithCorrelationId()    // <-- Necesita el servicio registrado
+);
+
+var correlationOptions = builder.Configuration
+    .GetSection("CorrelationIdOptions")
+    .Get<CorrelationIdOptions>();
+
+builder.Services.AddDefaultCorrelationId(options => { 
+    options.RequestHeader = correlationOptions?.RequestHeader ?? "X-Correlation-Id"; 
+    options.ResponseHeader = correlationOptions?.ResponseHeader ?? "X-Correlation-Id"; 
+    options.UpdateTraceIdentifier = correlationOptions?.UpdateTraceIdentifier ?? true; 
+    options.IncludeInResponse = correlationOptions?.IncludeInResponse ?? true;
+    options.AddToLoggingScope = true;
+});
 
 builder.Services.AddSwaggerGen(c => {
     c.SwaggerDoc("v1", new OpenApiInfo { Title = "Factura API", Version = "v1" });
@@ -60,9 +93,6 @@ builder.Services.AddScoped<ConexionSql>();
     AddScoped: Significa que por cada solicitud HTTP que llegue a la aplicación, se creará una nueva instancia de la clase ConexionSql.
 */
 
-//Logger
-builder.Services.AddSingleton<IFileLogger, FileLogger>();
-
 // Repositorios
 builder.Services.AddScoped<IClienteRepository, ClienteRepository>();
 builder.Services.AddScoped<IProveedorRepository, ProveedorRepository>();
@@ -100,21 +130,22 @@ builder.Services.AddAuthentication(options => {
 // Servicios para autenticacion
 builder.Services.AddScoped<IAuthService, AuthService>();
 builder.Services.AddScoped<IUsuarioService, UsuarioService>();
-var app = builder.Build();
 
+var app = builder.Build();
+app.UseCorrelationId();
 
 var dbFile = Path.Combine(AppContext.BaseDirectory, "Database", "facturacion.db");
 Console.WriteLine("DB Path: " + dbFile);
 Console.WriteLine("DB Exists: " + File.Exists(dbFile));
-
-
-
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment()|| app.Environment.IsProduction()){
     app.UseSwagger();
     app.UseSwaggerUI();
 }
+
+
+
 app.UseCors("AllowAngular");
 app.UseAuthentication();
 app.UseAuthorization();

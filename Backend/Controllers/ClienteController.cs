@@ -1,7 +1,6 @@
 using Microsoft.AspNetCore.Mvc;
 using Backend.Models;
 using Backend.Persistence.Repositories.Interfaces;
-using Backend.Persistence.Logging;
 using Microsoft.AspNetCore.Authorization;
 
 [Authorize] // <--- Solo usuarios con Token válido pueden entrar aquí
@@ -9,9 +8,9 @@ using Microsoft.AspNetCore.Authorization;
 [Route("api/[controller]")]
 public class ClienteController : ControllerBase{
     private readonly IClienteRepository _repository;
-    private readonly IFileLogger _logger;
+    private readonly ILogger<ClienteController> _logger;
 
-    public ClienteController(IClienteRepository repository, IFileLogger logger){
+    public ClienteController(IClienteRepository repository, ILogger<ClienteController> logger){
         _repository = repository;
         _logger = logger;
     }

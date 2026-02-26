@@ -1,7 +1,6 @@
 using Microsoft.AspNetCore.Mvc;
 using Backend.Models;
 using Backend.Persistence.Repositories;
-using Backend.Persistence.Logging;
 using Microsoft.AspNetCore.Authorization;
 
 [Authorize] // <--- Solo usuarios con Token válido pueden entrar aquí
@@ -9,9 +8,9 @@ using Microsoft.AspNetCore.Authorization;
 [Route("api/[controller]")]
 public class ProductoController : ControllerBase{ 
     private readonly IProductoRepository _repository;
-    private readonly IFileLogger _logger;
+    private readonly ILogger<ProductoController>  _logger;
 
-    public ProductoController(IProductoRepository repository, IFileLogger logger) {
+    public ProductoController(IProductoRepository repository, ILogger<ProductoController> logger) {
         _repository = repository;
         _logger = logger;
     }

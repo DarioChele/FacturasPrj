@@ -5,16 +5,20 @@ using Microsoft.IdentityModel.Tokens;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
+using System.Security.Cryptography;
+using Serilog;
 
 namespace Backend.Services;
 
 public class AuthService : IAuthService {
     private readonly IUsuarioRepository _userRepo;
     private readonly IConfiguration _config;
+    private readonly ILogger<AuthService> _logger;
 
-    public AuthService(IUsuarioRepository userRepo, IConfiguration config) {
+    public AuthService(IUsuarioRepository userRepo, IConfiguration config, ILogger<AuthService> logger) {
         _userRepo = userRepo;
         _config = config;
+        _logger = logger;
     }
 
     public async Task<string?> Login(string User, string Pwd) {
@@ -35,7 +39,7 @@ public class AuthService : IAuthService {
         if (usuario == null || !BCrypt.Net.BCrypt.Verify(Pwd, usuario.PasswordHash)) {
             return null;
         }
-
+        _logger.LogInformation("Usuario {User} ha iniciado sesion ", User);
         return GenerarToken(usuario);
     }
 

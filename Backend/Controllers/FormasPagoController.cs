@@ -1,7 +1,6 @@
 using Microsoft.AspNetCore.Mvc;
 using Backend.Models;
 using Backend.Persistence.Repositories.Interfaces;
-using Backend.Persistence.Logging;
 using Microsoft.AspNetCore.Authorization;
 
 [Authorize] // <--- Solo usuarios con Token válido pueden entrar aquí
@@ -9,9 +8,9 @@ using Microsoft.AspNetCore.Authorization;
 [Route("api/[controller]")]
 public class FormasPagoController : ControllerBase{
     private readonly IFormasPagoRepository _repository;
-    private readonly IFileLogger _logger;
+    private readonly ILogger<FormasPagoController> _logger;
 
-    public FormasPagoController(IFormasPagoRepository repository, IFileLogger logger){
+    public FormasPagoController(IFormasPagoRepository repository, ILogger<FormasPagoController> logger){
         _repository = repository;
         _logger = logger;
     }

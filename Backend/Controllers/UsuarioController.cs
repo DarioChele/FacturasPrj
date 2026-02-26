@@ -1,7 +1,6 @@
 using Microsoft.AspNetCore.Mvc;
 using Backend.Models;
 using Backend.Persistence.Repositories;
-using Backend.Persistence.Logging;
 using Microsoft.AspNetCore.Authorization;
 using Backend.Services;
 using Backend.Persistence.Repositories.Interfaces;
@@ -12,9 +11,9 @@ using Backend.Persistence.Repositories.Interfaces;
 public class UsuarioController : ControllerBase{
     private readonly IUsuarioRepository _repository;
     private readonly IUsuarioService _usuarioService;   
-    private readonly IFileLogger _logger;
+    private readonly ILogger<UsuarioController> _logger;
 
-    public UsuarioController(IUsuarioRepository repository, IUsuarioService usuarioService, IFileLogger logger){
+    public UsuarioController(IUsuarioRepository repository, IUsuarioService usuarioService, ILogger<UsuarioController> logger){
         _repository = repository;
         _usuarioService = usuarioService;
         _logger = logger;
