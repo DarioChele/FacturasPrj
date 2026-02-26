@@ -17,15 +17,10 @@ public class ProductoController : ControllerBase{
     }
 
     [HttpGet]
-    public async Task<IActionResult> Get([FromQuery] string? estado) => Ok(await _repository.ObtenerTodos(estado));
-    /*
-    [HttpGet]
     public async Task<IActionResult> Get(
-            [FromQuery] string? estado, 
-            [FromQuery] string? identificacion) 
-            => Ok(await _repository.ObtenerTodos(estado, identificacion));
-    
-    */
+            [FromQuery] string? estado,
+            [FromQuery] string? id) 
+            => Ok(await _repository.ObtenerTodos(estado, id));
     
     [HttpPost]
     public async Task<IActionResult> Post([FromBody] Producto producto){
@@ -46,7 +41,7 @@ public class ProductoController : ControllerBase{
     public async Task<IActionResult> Put(int id, [FromBody] Producto producto) {
         // Verificamos que el ID de la URL coincida con el del objeto
         if (producto == null || id != producto.Id) return BadRequest("ID inconsistente");
-
+        if (producto.Proveedores == null || !producto.Proveedores.Any()) return BadRequest(); 
         try {
             bool actualizado = await _repository.Modificar(producto);
             if (!actualizado) return NotFound(); // Producto no encontrado            

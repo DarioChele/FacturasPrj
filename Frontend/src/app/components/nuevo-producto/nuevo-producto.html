@@ -2,7 +2,10 @@
   <div class="card shadow-lg border-0">
     <div class="card-header bg-primary text-white d-flex justify-content-between">      
       <h4 class="mb-0">Creación de Nuevo Producto</h4>
-      <span class="badge bg-light text-dark">Vendedor: {{ vendedorNombre }}</span>
+      <span class="badge bg-light text-dark d-flex align-items-center justify-content-center" style="height:40px;">
+        Usuario: {{ vendedorNombre }}
+      </span>
+
     </div>
     <div class="card-body">
       <div class="row g-3 mb-4">
@@ -14,8 +17,17 @@
           <label class="form-label fw-bold">Precio Venta al Publico</label>
           <input type="number" class="form-control" [(ngModel)]="producto.precioUnitario" placeholder="Nombre Producto">
         </div>
+        @if (modoEdicion) {
+            <div class="col-md-3">
+                <label class="form-label fw-bold">Estado</label>
+                <button type="button" class="btn w-100 text-center" 
+                        [ngClass]="producto.estado === 1 ? 'btn-success' : 'btn-secondary'" (click)="cambiaEstado()"> 
+                        {{ producto.estadoDescripcion }} 
+                </button>
+                
+            </div>
+        }
       </div>
-
       <hr>
 
       <div class="bg-light p-3 rounded mb-4">
@@ -85,7 +97,7 @@
                     
             <div class="col-md-5">            
                 <button class="btn btn-success btn-lg w-100 mt-3 shadow" (click)="guardar()">
-                    <i class="bi bi-check2-circle"></i> GUARDAR Y FINALIZAR
+                  <i class="bi bi-check2-circle"></i> {{ modoEdicion ? 'ACTUALIZAR' : 'GUARDAR Y FINALIZAR' }}
                 </button>
             </div>
       </div>

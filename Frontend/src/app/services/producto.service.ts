@@ -13,13 +13,14 @@ export class ProductoService {
 
   constructor(private http: HttpClient) { }
 
-  getTodos(estado?: string): Observable<Producto[]> {
+  getTodos(estado?: string, id?: string ): Observable<Producto[]> {
     let params = new HttpParams();
     if (estado) params = params.set('estado', estado);
+    if (id) params = params.set('id', id);
     return this.http.get<Producto[]>(this.apiUrl, { params } );
   }
+  
   crear(producto: Producto): Observable<Producto> {
-    console.log("Enviamos a guardar el producto --> " + producto);
     return this.http.post<Producto>(this.apiUrl, producto);
   }
   actualizar(producto: Producto): Observable<Producto> {

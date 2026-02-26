@@ -13,3 +13,7 @@ Actual value was 14.
 [2/25/2026 6:16:06 PM] ERROR: Fallo al crear producto: Router SCS - 600 | Ex: Must add values for the following parameters: @proveedorpId
 [2/25/2026 6:21:39 PM] ERROR: Fallo al crear producto: Router SCS | Ex: Must add values for the following parameters: @proveedorpId
 [2/25/2026 6:22:11 PM] ERROR: Fallo al crear producto: Router SCS | Ex: Must add values for the following parameters: @proveedorpId
+[2/25/2026 10:47:26 PM] ERROR: Fallo al actualizar producto ID: 2 | Ex: SQLite Error 19: 'FOREIGN KEY constraint failed'.
+[2/25/2026 10:50:13 PM] ERROR: Fallo al actualizar producto ID: 2 | Ex: SQLite Error 19: 'FOREIGN KEY constraint failed'.
+[2/25/2026 10:54:51 PM] ERROR: Fallo al actualizar producto ID: 2 | Ex: SQLite Error 19: 'FOREIGN KEY constraint failed'.
+[2/25/2026 10:57:14 PM] ERROR: Fallo al actualizar producto ID: 2 | Ex: SQLite Error 19: 'FOREIGN KEY constraint failed'.

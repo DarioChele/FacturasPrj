@@ -33,9 +33,10 @@
             <td>{{ c.stockTotal }}</td>
             <td>{{ c.proveedores.length }}</td>
             <td class="text-center">
-              <div class="d-flex justify-content-center gap-2"> <button class="btn btn-sm btn-info text-white" (click)="abrirModal(c)">
-                  <i class="bi bi-pencil"></i> <span class="d-none d-md-inline"> Editar</span> </button>
-                
+              <div class="d-flex justify-content-center gap-2"> 
+                  <button class="btn btn-sm btn-info text-white" [routerLink]="['/editar-producto', c.id]">
+                    <i class="bi bi-pencil"></i> <span class="d-none d-md-inline"> Editar</span>
+                  </button>                
                 @if (auth.esAdmin()) {
                   <button class="btn btn-sm btn-danger" (click)="borrar(c.id)">
                     <i class="bi bi-trash"></i>
@@ -45,40 +46,42 @@
               </div>
             </td>
           </tr>
-
           <tr [class.collapse]="!detallesVisibles[c.id]"> 
             <td colspan="6"> 
-              <table class="table table-sm mb-0"> 
-                <thead> 
-                  <tr> 
-                    <th>Proveedor</th> 
-                    <th>Precio</th> 
-                    <th>Stock</th> 
-                    <th>Número Lote</th> 
-                  </tr> 
-                </thead> 
-                <tbody> 
-                  @for (prov of c.proveedores; track prov.proveedorId) { 
-                    <tr> 
-                      <td>{{ prov.nombreProveedor }}</td> 
-                      <td>{{ prov.precio }}</td> 
-                      <td>{{ prov.stock }}</td> 
-                      <td>{{ prov.numeroLote }}</td> 
-                    </tr> 
-                  } 
-                </tbody> 
-              </table>
+              <div class="table-responsive ms-4 shadow-sm rounded">
+                <table class="table table-sm table-bordered table-hover mb-0 align-middle shadow-sm rounded">
+                  <thead class="table-info">
+                    <tr>
+                      <th>Proveedor</th>
+                      <th>Precio</th>
+                      <th>Stock</th>
+                      <th>Número Lote</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    @for (prov of c.proveedores; track prov.proveedorId) { 
+                      <tr>
+                        <td>
+                          <span class="fw-bold">{{ prov.nombreProveedor || '—' }}</span>
+                        </td>
+                        <td>
+                          <span class="text-success">{{ prov.precio | currency:'USD':'symbol' }}</span>
+                        </td>
+                        <td>
+                          <span [class]="prov.stock > 0 ? 'badge bg-success' : 'badge bg-danger'">
+                            {{ prov.stock }}
+                          </span>
+                        </td>
+                        <td>
+                          <span class="text-muted">{{ prov.numeroLote || 'N/A' }}</span>
+                        </td>
+                      </tr>
+                    } 
+                  </tbody>
+                </table>
+              </div>
             </td> 
           </tr>
-
-
-
-
-
-
-
-
-
 
       } @empty {
           <tr>

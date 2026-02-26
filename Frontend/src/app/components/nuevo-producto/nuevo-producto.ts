@@ -1,4 +1,5 @@
 import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
+import { ActivatedRoute } from '@angular/router';
 import { AuthService } from '../../services/auth.service';
 import { Producto } from '../../models/producto.interface';
 import { Proveedor } from '../../models/proveedor.interface';
@@ -16,7 +17,7 @@ export class NuevoProducto implements OnInit {
   proveedores: Proveedor[]=[];
   vendedorNombre: string = '';
  
-  // El objeto que enviaremos al Backend (según estructura)
+  // El objeto que enviaremos al Backend (según estructura)  
   producto: Producto= {
     id:0,
     nombre: '',
@@ -26,12 +27,16 @@ export class NuevoProducto implements OnInit {
   };
   // Variables auxiliares para la línea actual
   proveedorTmp = { proveedorId: 0, nombreProveedor: '', precio: 0, stock: 1, numeroLote: '' }; 
+  // Variable para definir si está en modo edición o no
+  modoEdicion: boolean = false;
+
   
   constructor(
     private proveedorService: ProveedorService, 
     private productoService: ProductoService,
     private auth: AuthService,
-    private cdr: ChangeDetectorRef
+    private cdr: ChangeDetectorRef,
+    private route: ActivatedRoute
   ) {}
 
   ngOnInit() {
@@ -47,14 +52,27 @@ export class NuevoProducto implements OnInit {
       },
       error: (err) => console.error('Error proveedores:', err)
     });
-  }
-  // Método para gestionar los pagos antes de guardar
-  prepararPagos() {
-    // Si la lista de pagos está vacía, agregamos el total con la forma de pago seleccionada
-    if (this.producto.proveedores.length === 0) {
-      
+    // Revisar si estamos en modo edición 
+    const id = this.route.snapshot.paramMap.get('id'); 
+    if (id) { 
+      this.modoEdicion = true; 
+      this.productoService.getTodos("", id).subscribe({ 
+        next: (res) => { 
+          this.producto = res[0];
+          this.cdr.detectChanges(); // <--- recarga la vista
+        }, 
+        error: (err) => console.error('Error cargando producto:', err) }
+      ); 
+    }else{
+      this.producto = { id: 0, nombre: '', precioUnitario: 0, estado: 0, proveedores: [] };
     }
   }
+  // Método para cargar un producto que se quiera editar
+  abrirProducto(producto: Producto) {
+    this.producto = { ...producto }; // clonas el objeto
+    this.modoEdicion = true;
+  }
+
   // --- Lógica de Cálculos ---
   agregarDetalle() {
     const proveed = this.proveedores.find(p => p.id == this.proveedorTmp.proveedorId);
@@ -98,17 +116,35 @@ export class NuevoProducto implements OnInit {
       alert('Error: Debe agregar al menos un proveedor.');
       return;
     }   
-    this.productoService.crear(this.producto).subscribe({
-      
-      
-      next: (res) => {
-        alert('Producto creado con éxito');
-        // Redirigir al listado para que se vea "ligero" el flujo
-        // this.router.navigate(['/facturas']); 
-      },
-      error: (err) => {
-        alert('Error al guardar: ' + (err.error || 'Intente nuevamente'));
-      }
-    });
+    if (this.modoEdicion){
+      this.productoService.actualizar(this.producto).subscribe({
+        next: (res) => {
+          alert('Producto actualizado con éxito');          
+        },
+        error: (err) => {
+          alert('Error al actualizar: ' + (err.error || 'Intente nuevamente'));
+        }
+      });
+    }else{
+      this.productoService.crear(this.producto).subscribe({
+        next: (res) => {
+          alert('Producto creado con éxito');
+          // this.router.navigate(['/facturas']); 
+        },
+        error: (err) => {
+          alert('Error al guardar: ' + (err.error || 'Intente nuevamente'));
+        }
+      });
+    }
   }
+  cambiaEstado() {
+  if (this.producto.estado === 1) {
+    this.producto.estado = 0;
+    this.producto.estadoDescripcion = 'Inactivo';
+  } else {
+    this.producto.estado = 1;
+    this.producto.estadoDescripcion = 'Activo';
+  }
+}
+
 }

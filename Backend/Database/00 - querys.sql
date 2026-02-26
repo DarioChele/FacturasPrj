@@ -95,9 +95,13 @@ SELECT Id, FacturaId, FormaPagoId, ValorPagado FROM FormasPagoFactura;
 
 SELECT Id, ProductoId, ProveedorId, NumeroLote, Precio, Stock FROM ProductoProveedor;
 
+/*
+delete from ProductoProveedor where ProductoId = 8
+*/
+
 SELECT 
-    pp.Id AS ProductoProveedorId,
-    pp.ProductoId AS ProductoId,
+    p.Id AS ProductoId,
+    pr.Id AS ProductoProveedorId,    
     p.Nombre AS NombreProducto,
     p.Estado,
     p.PrecioUnitario AS PrecioUnitario,
@@ -106,9 +110,11 @@ SELECT
     pp.Precio,
     pp.Stock,
     pp.NumeroLote
-FROM ProductoProveedor pp
-INNER JOIN Productos p ON pp.ProductoId = p.Id
-INNER JOIN Proveedores pr ON pp.ProveedorId = pr.Id;
+FROM Productos p
+LEFT JOIN ProductoProveedor pp ON pp.ProductoId = p.Id
+LEFT JOIN Proveedores pr ON pp.ProveedorId = pr.Id
+where 1=1
+ and p.id = 2
 
 
 /*

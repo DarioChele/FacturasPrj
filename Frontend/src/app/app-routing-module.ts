@@ -20,6 +20,7 @@ const routes: Routes = [
   {path: 'facturas', component: Facturas, canActivate: [authGuard]},
   {path: 'nueva-factura', component: NuevaFactura, canActivate: [authGuard]},  
   {path: 'nuevo-producto', component: NuevoProducto, canActivate: [authGuard]},
+  {path: 'editar-producto/:id', component: NuevoProducto, canActivate: [authGuard]},
   {path: '', redirectTo: '/login', pathMatch: 'full' },
   // Esta es la ruta "comodín" por si escriben cualquier cosa
   { path: '**', redirectTo: '/login' }
