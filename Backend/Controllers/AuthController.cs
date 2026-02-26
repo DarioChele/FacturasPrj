@@ -12,7 +12,23 @@ public class AuthController : ControllerBase {
         _authService = authService;
         _logger = logger;
     }
-
+    /// <summary> 
+    /// Inicia sesión de usuario con credenciales. 
+    /// </summary> 
+    /// <remarks>
+    /// **Sample Request:**
+    /// 
+    ///     {
+    ///       "user": "Tom",
+    ///       "pwd": "tom321"
+    ///     }
+    ///     
+    /// Retorna un JWT.
+    /// </remarks>
+    /// <param name="login">Objeto con usuario y contraseña.</param> 
+    /// <returns>Token JWT si la autenticación es exitosa.</returns>
+    /// <response code="200">Devuelve el token JWT</response>
+    /// <response code="401">Credenciales inválidas</response>
     [HttpPost("login")]
     public async Task<IActionResult> Login([FromBody] LoginDTO login) {
         var token = await _authService.Login(login.User, login.Pwd);

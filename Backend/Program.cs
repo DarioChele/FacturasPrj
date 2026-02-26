@@ -9,24 +9,14 @@ using Microsoft.OpenApi.Models;
 using CorrelationId;
 using CorrelationId.DependencyInjection;
 using Serilog;
-
+using System.Reflection;
 
 var builder = WebApplication.CreateBuilder(args);
-
 
 // 1. Servicios básicos
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 // Configuración de Serilog
-// Log.Logger = new LoggerConfiguration() 
-//         .Enrich.FromLogContext()
-//         .Enrich.WithCorrelationId() // <----
-//         .MinimumLevel.Debug() 
-//         .WriteTo.Console(outputTemplate: "[{Timestamp:yyyy-MM-dd HH:mm:ss.fff zzz} {Level:u3}] {Message:lj} [CorrelationId:{CorrelationId}]{NewLine}{Exception}")
-//         .WriteTo.File("Database/logs.txt", 
-//                 rollingInterval: RollingInterval.Day, 
-//                 outputTemplate: "[{Timestamp:yyyy-MM-dd HH:mm:ss.fff zzz} {Level:u3}] {Message:lj} [CorrelationId:{CorrelationId}]{NewLine}{Exception}")
-//         .CreateLogger();
 
 builder.Host.UseSerilog((context, services, configuration) => 
     configuration
@@ -48,9 +38,13 @@ builder.Services.AddDefaultCorrelationId(options => {
     options.AddToLoggingScope = true;
 });
 
+//Swagger
+builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen(c => {
+    var xmlFile = $"{Assembly.GetExecutingAssembly().GetName().Name}.xml"; 
+    var xmlPath = Path.Combine(AppContext.BaseDirectory, xmlFile); 
+    c.IncludeXmlComments(xmlPath);
     c.SwaggerDoc("v1", new OpenApiInfo { Title = "Factura API", Version = "v1" });
-
     // 1. Definir el esquema de seguridad
     c.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme {
         Description = "JWT Authorization encabezado usando el esquema Bearer. Ejemplo: 'Bearer 12345abcdef'",
